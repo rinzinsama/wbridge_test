@@ -80,6 +80,7 @@ export default {
   },
   mounted() {
     this.socket = io('/');
+    // console.log(process.env.DB_URL)
 
     // Prompt user for username
     this.socket.on('requestUsername', () => {

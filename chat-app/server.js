@@ -3,6 +3,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 // Serve the static files from the Quasar dist directory
 app.use(express.static(__dirname + '/dist/spa'));
@@ -13,10 +14,11 @@ app.get('/', function (req, res) {
 });
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://wbridge_renzen:74vao6-wbridge_renzen@wbridgecluster.j0zn7zh.mongodb.net/test', {
+mongoose.connect(process.env.DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
+
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
