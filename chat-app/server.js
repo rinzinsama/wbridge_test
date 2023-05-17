@@ -13,6 +13,9 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/dist/spa/index.html');
 });
 
+// const routes = require('./routes');
+// app.use('/api', routes);
+
 // Connect to MongoDB
 mongoose.connect(process.env.DB_URL, {
     useNewUrlParser: true,
@@ -35,6 +38,7 @@ const messageSchema = new mongoose.Schema({
 });
 const Message = mongoose.model('Message', messageSchema);
 
+const Item = require('./models/Item');
 // Store the connected users
 let users = {};
 
@@ -91,6 +95,56 @@ io.on('connection', function (socket) {
             if (err) return console.error(err);
             res.json(messages);
         });
+    });
+
+    // ITEM ROUTES
+    // Retrieve all items
+    app.get('/api/items', (req, res) => {
+        Item.find()
+            .then(items => {
+                res.json(items);
+            })
+            .catch(error => {
+                res.status(500).json({ error: 'Error retrieving items' });
+            });
+    });
+
+    // Add a new item
+    app.post('/api/items', (req, res) => {
+        console.log(req.body)
+        const newItem = new Item({
+            name: req.body.name,
+        });
+
+        newItem.save()
+            .then(() => {
+                res.status(201).json({ message: 'Item added successfully' });
+            })
+            .catch(error => {
+                res.status(500).json({ error: 'Error adding item' });
+            });
+    });
+
+    // Delete an item
+    app.delete('/api/items/:id', (req, res) => {
+        Item.findByIdAndDelete(req.params.id)
+            .then(() => {
+                res.json({ message: 'Item deleted successfully' });
+            })
+            .catch(error => {
+                res.status(500).json({ error: 'Error deleting item' });
+            });
+    });
+
+    // Update an item
+    app.put('/api/items/:id', (req, res) => {
+        Item.findByIdAndUpdate(req.params.id, { name: req.body.name })
+            .then(() => {
+                res.json({ message: 'Item updated successfully' });
+            })
+            .catch(error => {
+                res.status(500).json({ error: 'Error updating item' });
+            });
     });
 
     // Handle disconnection
