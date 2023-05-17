@@ -8,6 +8,14 @@ const app = express();
 
 // Middleware
 app.use(bodyParser.json());
+
+// Serve the static files from the Quasar dist directory
+app.use(express.static(__dirname + '/dist/spa'));
+
+// Serve the Quasar index.html for all routes
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + '/dist/spa/index.html');
+});
 const routes = require('./routes');
 app.use('/api', routes);
 
