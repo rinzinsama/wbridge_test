@@ -79,7 +79,7 @@ export default {
     };
   },
   mounted() {
-    this.socket = io(process.env.APP_URL + '/');
+    this.socket = io('/');
     // console.log(process.env.DB_URL)
 
     // Prompt user for username
